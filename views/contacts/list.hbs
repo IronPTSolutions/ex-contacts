@@ -1,0 +1,19 @@
+<div class="row justify-content-center">
+  <div class="col-12 col-md-8">
+
+    <div class="list-group">
+      {{#each contacts as |contact|}}
+        <div class="list-group-item">
+          <div class="d-flex flex-column">
+            <h6>{{ contact.name }}</h6>
+            <div class="d-flex text-secondary">
+              <small><i class="fa fa-envelope me-1"></i>{{ contact.email }}</small>
+              <small><i class="fa fa-phone mx-1"></i>{{ contact.phone }}</small>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+
+  </div>
+</div>
