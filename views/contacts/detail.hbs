@@ -1,3 +1,15 @@
 <h5>{{ contact.name }}</h5>
 <small><i class="fa fa-envelope"></i> {{ contact.email }}</small>
 <small><i class="fa fa-phone"></i> {{ contact.phone }}</small>
+
+<div>
+    <a href="/contacts/{{contact.id}}/edit">Edit</a>
+</div>
+
+<div>
+    <form action="/contacts/{{contact.id}}/delete" method="POST">
+        <button type="submit" class="btn btn-danger btn-sm">
+            Delete
+        </button>
+    </form>
+</div>

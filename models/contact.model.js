@@ -1,28 +1,21 @@
-const allContacts = require('../data/contacts.json');
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-class Contact {
+const schema = new Schema({
+  name: {
+    type: String,
+    required: [true, "name is required"],
+  },
+  email: {
+    type: String,
+    required: [true, "email is required"],
+  },
+  phone: {
+    type: String,
+    required: [true, "phone is required"],
+  },
+});
 
-  static find(search) {
-    return new Promise((resolve) => {
-      if (search) {
-        const regex = new RegExp(search, 'i');
-        resolve(allContacts.filter(contact => regex.test(contact.name)));
-      } else {
-        resolve(allContacts);
-      }
-    })
-  }
-
-  static findByEmail(email) {
-    const contact = allContacts.find(contact => contact.email === email);
-    return Promise.resolve(contact);
-  }
-
-  static create(contact) {
-    allContacts.push(contact);
-    return Promise.resolve(contact);
-  }
-
-}
+const Contact = mongoose.model("Contact", schema);
 
 module.exports = Contact;

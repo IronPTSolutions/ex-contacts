@@ -8,7 +8,7 @@
       </div>
     {{/if}}
 
-    <form action="/contacts" method="post">
+    <form action="/contacts/{{contact.id}}" method="post">
       <div class="input-group mb-1">
         <span class="input-group-text"><i class="fa fa-user fa-fw"></i></span>
         <input value="{{contact.name}}" type="text" name="name" class="form-control" placeholder="Contact name...">
@@ -25,7 +25,7 @@
       </div>
     
       <div class="d-grid">
-        <button class="btn btn-primary" type="submit">Create Contact</button>
+        <button class="btn btn-primary" type="submit">Edit Contact</button>
       </div>
     </form>
   </div>
