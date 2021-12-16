@@ -14,7 +14,7 @@ const schema = new Schema({
     type: String,
     required: [true, "phone is required"],
   },
-});
+}, { timestamp: true });
 
 const Contact = mongoose.model("Contact", schema);
 

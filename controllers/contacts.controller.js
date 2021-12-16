@@ -1,4 +1,6 @@
+const createError = require('http-errors');
 const Contact = require("../models/contact.model");
+const Event = require("../models/event.model");
 
 module.exports.list = (req, res, next) => {
   Contact.find()
@@ -14,9 +16,10 @@ module.exports.detail = (req, res, next) => {
   Contact.findById(req.params.id)
     .then((contact) => {
       if (contact) {
-        res.render("contacts/detail", { contact });
+        return Event.find({ contact: req.params.id })
+          .then(events => res.render("contacts/detail", { contact, events }))
       } else {
-        res.redirect("/contacts");
+        next(createError(404, 'Contact not found'))
       }
     })
     .catch((error) => {
@@ -30,9 +33,7 @@ module.exports.create = (req, res, next) => {
 
 module.exports.doCreate = (req, res, next) => {
   Contact.create(req.body)
-    .then(() => {
-      res.redirect("/contacts");
-    })
+    .then(() => res.redirect("/contacts"))
     .catch((error) => {
       res.render("contacts/create", {
         contact: req.body,
@@ -47,7 +48,7 @@ module.exports.edit = (req, res, next) => {
       if (contact) {
         res.render("contacts/edit", { contact });
       } else {
-        res.redirect("/contacts");
+        next(createError(404, 'Contact not found'))
       }
     })
     .catch((error) => {
@@ -61,7 +62,7 @@ module.exports.doEdit = (req, res, next) => {
       if (contact) {
         res.redirect(`/contacts/${contact.id}`);
       } else {
-        res.redirect("/contacts");
+        next(createError(404, 'Contact not found'))
       }
     })
     .catch((error) => {
@@ -77,10 +78,12 @@ module.exports.doEdit = (req, res, next) => {
 
 module.exports.delete = (req, res, next) => {
   Contact.findByIdAndDelete(req.params.id)
-    .then(() => {
-      res.redirect("/contacts");
+    .then(contact => {
+      if (contact) {
+        res.redirect(`/contacts`);
+      } else {
+        next(createError(404, 'Contact not found'))
+      }
     })
-    .catch((error) => {
-      next(error);
-    });
+    .catch((error) => next(error));
 };
