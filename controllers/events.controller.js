@@ -7,7 +7,7 @@ const Event = require('../models/event.model');
 module.exports.doCreate = (req, res, next) => {
   const { contactId } = req.params;
   const event = req.body;
-  event.contact = contactId;
+  event.contact = req.user.id;
 
   Contact.findById(contactId)
     .then(contact => {
