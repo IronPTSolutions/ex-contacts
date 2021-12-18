@@ -1,31 +1,26 @@
 <div class="row justify-content-center">
   <div class="col-12 col-md-6">
-    {{#if errors}}
-      <div class="alert alert-danger">
-        {{#each errors as |error|}}
-          <div>{{error}}</div>
-        {{/each}}
-      </div>
-    {{/if}}
-
     <form action="/contacts/{{contact.id}}" method="post">
       <div class="input-group mb-1">
-        <span class="input-group-text"><i class="fa fa-user fa-fw"></i></span>
+        <span class="input-group-text {{#if errors.name}}is-invalid{{/if}}"><i class="fa fa-user fa-fw"></i></span>
         <input value="{{contact.name}}" type="text" name="name" class="form-control" placeholder="Contact name...">
+        <div class="invalid-feedback">{{ errors.name }}</div>
       </div>
-    
+      
       <div class="input-group mb-1">
-        <span class="input-group-text"><i class="fa fa-envelope fa-fw"></i></span>
+        <span class="input-group-text {{#if errors.email}}is-invalid{{/if}}"><i class="fa fa-envelope fa-fw"></i></span>
         <input value="{{contact.email}}" type="text" name="email" class="form-control" placeholder="name@example.org">
+        <div class="invalid-feedback">{{ errors.email }}</div>
       </div>
-    
+      
       <div class="input-group mb-2">
-        <span class="input-group-text"><i class="fa fa-phone fa-fw"></i></span>
+        <span class="input-group-text {{#if errors.phone}}is-invalid{{/if}}"><i class="fa fa-phone fa-fw"></i></span>
         <input value="{{contact.phone}}" type="text" name="phone" class="form-control" placeholder="+1 (913) 497-2020">
+        <div class="invalid-feedback">{{ errors.phone }}</div>
       </div>
     
       <div class="d-grid">
-        <button class="btn btn-primary" type="submit">Edit Contact</button>
+        <button class="btn btn-primary btn-sm text-uppercase" type="submit">Edit Contact</button>
       </div>
     </form>
   </div>

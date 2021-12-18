@@ -1,15 +1,12 @@
 const createError = require('http-errors');
+const mongoose = require('mongoose');
 const Contact = require("../models/contact.model");
 const Event = require("../models/event.model");
 
 module.exports.list = (req, res, next) => {
   Contact.find()
-    .then((contacts) => {
-      res.render("contacts/list", { contacts });
-    })
-    .catch((error) => {
-      next(error);
-    });
+    .then((contacts) => res.render("contacts/list", { contacts }))
+    .catch((error) => next(error));
 };
 
 module.exports.detail = (req, res, next) => {
@@ -22,9 +19,7 @@ module.exports.detail = (req, res, next) => {
         next(createError(404, 'Contact not found'))
       }
     })
-    .catch((error) => {
-      next(error);
-    });
+    .catch((error) => next(error));
 };
 
 module.exports.create = (req, res, next) => {
@@ -35,10 +30,14 @@ module.exports.doCreate = (req, res, next) => {
   Contact.create(req.body)
     .then(() => res.redirect("/contacts"))
     .catch((error) => {
-      res.render("contacts/create", {
-        contact: req.body,
-        errors: error.errors,
-      });
+      if (error instanceof mongoose.Error.ValidationError) {
+        res.render("contacts/create", {
+          contact: req.body,
+          errors: error.errors,
+        });
+      } else {
+        next(error);
+      }
     });
 };
 
@@ -51,9 +50,7 @@ module.exports.edit = (req, res, next) => {
         next(createError(404, 'Contact not found'))
       }
     })
-    .catch((error) => {
-      next(error);
-    });
+    .catch((error) => next(error));
 };
 
 module.exports.doEdit = (req, res, next) => {
@@ -66,13 +63,17 @@ module.exports.doEdit = (req, res, next) => {
       }
     })
     .catch((error) => {
-      const contact = req.body;
-      contact.id = req.params.id;
+      if (error instanceof mongoose.Error.ValidationError) {
+        const contact = req.body;
+        contact.id = req.params.id;
 
-      res.render("contacts/edit", {
-        contact,
-        errors: error.errors,
-      });
+        res.render("contacts/edit", {
+          contact,
+          errors: error.errors,
+        });
+      } else {
+        next(error);
+      }
     });
 };
 
