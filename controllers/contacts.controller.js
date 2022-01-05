@@ -1,22 +1,40 @@
-const createError = require('http-errors');
-const mongoose = require('mongoose');
+const createError = require("http-errors");
+const mongoose = require("mongoose");
 const Contact = require("../models/contact.model");
 const Event = require("../models/event.model");
 
+module.exports.admin = (req, res, next) => {
+  res.send("Only admin users can access here!");
+};
+
 module.exports.list = (req, res, next) => {
-  Contact.find()
+  const query = {};
+
+  if (!req.user.admin) {
+    query.author = req.user._id;
+  }
+
+  Contact.find(query)
+    .populate("author")
     .then((contacts) => res.render("contacts/list", { contacts }))
     .catch((error) => next(error));
 };
 
 module.exports.detail = (req, res, next) => {
-  Contact.findById(req.params.id)
+  const query = { _id: req.params.id };
+
+  if (!req.user.admin) {
+    query.author = req.user._id;
+  }
+
+  Contact.findOne(query)
     .then((contact) => {
       if (contact) {
-        return Event.find({ contact: req.params.id })
-          .then(events => res.render("contacts/detail", { contact, events }))
+        return Event.find({ contact: req.params.id }).then((events) =>
+          res.render("contacts/detail", { contact, events })
+        );
       } else {
-        next(createError(404, 'Contact not found'))
+        next(createError(404, "Contact not found"));
       }
     })
     .catch((error) => next(error));
@@ -27,6 +45,8 @@ module.exports.create = (req, res, next) => {
 };
 
 module.exports.doCreate = (req, res, next) => {
+  req.body.author = req.user.id;
+
   Contact.create(req.body)
     .then(() => res.redirect("/contacts"))
     .catch((error) => {
@@ -47,7 +67,7 @@ module.exports.edit = (req, res, next) => {
       if (contact) {
         res.render("contacts/edit", { contact });
       } else {
-        next(createError(404, 'Contact not found'))
+        next(createError(404, "Contact not found"));
       }
     })
     .catch((error) => next(error));
@@ -59,7 +79,7 @@ module.exports.doEdit = (req, res, next) => {
       if (contact) {
         res.redirect(`/contacts/${contact.id}`);
       } else {
-        next(createError(404, 'Contact not found'))
+        next(createError(404, "Contact not found"));
       }
     })
     .catch((error) => {
@@ -79,11 +99,11 @@ module.exports.doEdit = (req, res, next) => {
 
 module.exports.delete = (req, res, next) => {
   Contact.findByIdAndDelete(req.params.id)
-    .then(contact => {
+    .then((contact) => {
       if (contact) {
         res.redirect(`/contacts`);
       } else {
-        next(createError(404, 'Contact not found'))
+        next(createError(404, "Contact not found"));
       }
     })
     .catch((error) => next(error));

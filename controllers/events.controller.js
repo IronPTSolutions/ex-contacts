@@ -1,8 +1,7 @@
-const createError = require('http-errors');
-const mongoose = require('mongoose');
-const Contact = require('../models/contact.model');
-const Event = require('../models/event.model');
-
+const createError = require("http-errors");
+const mongoose = require("mongoose");
+const Contact = require("../models/contact.model");
+const Event = require("../models/event.model");
 
 module.exports.doCreate = (req, res, next) => {
   const { contactId } = req.params;
@@ -10,23 +9,25 @@ module.exports.doCreate = (req, res, next) => {
   event.contact = req.user.id;
 
   Contact.findById(contactId)
-    .then(contact => {
+    .then((contact) => {
       if (contact) {
         req.contact = contact;
-        return Event.create(event)
-          .then(event => res.redirect(`/contacts/${contactId}`))
+        return Event.create(event).then((event) =>
+          res.redirect(`/contacts/${contactId}`)
+        );
       } else {
-        next(createError(404, 'Contact not found'));
+        next(createError(404, "Contact not found"));
       }
-    }).catch(error => {
+    })
+    .catch((error) => {
       if (error instanceof mongoose.Error.ValidationError) {
-        res.render('contacts/detail', {
+        res.render("contacts/detail", {
           event,
           errors: error.errors,
-          contact: req.contact
-        })
+          contact: req.contact,
+        });
       } else {
-        next(error)
+        next(error);
       }
     });
-}
+};
